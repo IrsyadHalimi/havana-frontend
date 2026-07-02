@@ -388,7 +388,7 @@ export default function DetailView() {
               className="w-full bg-brand-green hover:bg-brand-green-dark text-white text-xs font-semibold py-4 px-4 rounded-xl shadow-lg shadow-brand-green/15 active:scale-98 transition-all cursor-pointer text-center"
               id="btn-place-booking"
             >
-              Reservasi Sanctuary
+              Reservasi
             </button>
 
           </div>

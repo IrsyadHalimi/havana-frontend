@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { SearchQuery, Booking } from './types';
+import { SearchQuery, Booking, User } from './types';
 
 interface AppState {
   activeTab: 'Beranda' | 'Destinasi' | 'Favorit' | 'Cerita Kami' | 'Pesanan';
@@ -9,6 +9,14 @@ interface AppState {
   bookings: Booking[];
   selectedCategory: string;
   sortBy: string;
+  
+  // Auth state
+  currentUser: User | null;
+  authScreen: 'login' | 'register' | 'verify' | null;
+  
+  // Admin Mode state
+  isAdminMode: boolean;
+  adminActiveTab: 'Resor' | 'Manajemen Kamar' | 'Analitik' | 'Pesanan' | 'Pengaturan';
   
   // Active detail page state helpers
   selectedRoomId: string | null;
@@ -32,6 +40,12 @@ interface AppState {
   setSelectedStayDates: (start: string, end: string) => void;
   setGuestsCount: (count: number) => void;
   setBookingListOpen: (isOpen: boolean) => void;
+  
+  // Auth actions
+  setCurrentUser: (user: User | null) => void;
+  setAuthScreen: (screen: 'login' | 'register' | 'verify' | null) => void;
+  setAdminMode: (isAdmin: boolean) => void;
+  setAdminActiveTab: (tab: 'Resor' | 'Manajemen Kamar' | 'Analitik' | 'Pesanan' | 'Pengaturan') => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -48,6 +62,14 @@ export const useAppStore = create<AppState>((set) => ({
   selectedCategory: 'Semua',
   sortBy: 'default',
   
+  // Auth default state
+  currentUser: null,
+  authScreen: null,
+  
+  // Admin Mode default
+  isAdminMode: false,
+  adminActiveTab: 'Analitik',
+  
   // Interactive room selections default to first room
   selectedRoomId: null,
   selectedStartDate: '2026-11-01',
@@ -57,7 +79,6 @@ export const useAppStore = create<AppState>((set) => ({
   isBookingListOpen: false,
 
   setActiveTab: (tab) => set((state) => {
-    // If going to favorites or bookings tab, let's reset or trigger modals
     if (tab === 'Pesanan') {
       return { activeTab: 'Beranda', isBookingListOpen: true };
     }
@@ -66,7 +87,7 @@ export const useAppStore = create<AppState>((set) => ({
   
   setSelectedLodgeId: (id) => set({ 
     selectedLodgeId: id,
-    selectedRoomId: null // Reset room selection on change
+    selectedRoomId: null
   }),
   
   setSearchQuery: (query) => set((state) => ({ 
@@ -97,5 +118,11 @@ export const useAppStore = create<AppState>((set) => ({
   setSelectedStayDates: (start, end) => set({ selectedStartDate: start, selectedEndDate: end }),
   setGuestsCount: (count) => set({ guestsCount: count }),
   
-  setBookingListOpen: (isOpen) => set({ isBookingListOpen: isOpen })
+  setBookingListOpen: (isOpen) => set({ isBookingListOpen: isOpen }),
+  
+  // Auth actions
+  setCurrentUser: (user) => set({ currentUser: user }),
+  setAuthScreen: (screen) => set({ authScreen: screen }),
+  setAdminMode: (isAdmin) => set({ isAdminMode: isAdmin, activeTab: 'Beranda', selectedLodgeId: null }),
+  setAdminActiveTab: (tab) => set({ adminActiveTab: tab })
 }));

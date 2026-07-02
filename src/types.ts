@@ -42,3 +42,18 @@ export interface SearchQuery {
   endDate: string;
   guests: number;
 }
+
+export interface User {
+  email: string;
+  name: string;
+  role: 'admin' | 'user';
+  isVerified: boolean;
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  basePrice: number;
+  totalUnits: number;
+  availableUnits: number;
+}
