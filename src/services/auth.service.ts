@@ -2,7 +2,7 @@
 import { LoginInput, RegisterInput } from '../validators/auth.validator';
 import { AuthResponse } from '../types/auth.type';
 
-const API_URL = 'http://localhost:5000/api/auth'; // Sesuaikan port backend Anda
+const API_URL = 'http://localhost:8000/api/auth'; // Sesuaikan port backend Anda
 
 export const authService = {
   async login(data: LoginInput): Promise<AuthResponse> {

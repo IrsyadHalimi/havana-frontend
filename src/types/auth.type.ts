@@ -2,8 +2,8 @@
 export interface User {
   id?: string;
   email: string;
-  name: string;
-  role: 'user' | 'admin';
+  fullName: string;
+  role: 'tenant' | 'customer';
   isVerified: boolean;
 }
 

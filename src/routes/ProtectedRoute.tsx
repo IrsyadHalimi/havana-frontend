@@ -2,7 +2,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
-export const ProtectedRoute = ({ allowedRoles }: { allowedRoles?: ('user' | 'admin')[] }) => {
+export const ProtectedRoute = ({ allowedRoles }: { allowedRoles?: ('tenant' | 'customer')[] }) => {
   const { currentUser, authScreen } = useAuthStore();
 
   // Jika belum login, tendang ke halaman auth/home

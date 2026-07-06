@@ -3,26 +3,43 @@ import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { authService } from '../services/auth.service';
 import { LoginInput, RegisterInput } from '../validators/auth.validator';
-import { useNavigate } from 'react-router-dom';
+
+// Helper untuk mengekstrak pesan error dari Axios/Backend secara aman
+const getErrorMessage = (err: any, fallbackMessage: string): string => {
+  // Jika error berasal dari response backend yang dikirim via Axios
+  if (err?.response?.data?.message) {
+    return err.response.data.message;
+  }
+  // Jika error kustom instansiasi lokal atau error standar JS
+  if (err instanceof Error) {
+    return err.message;
+  }
+  // Fallback jika tidak terdeteksi
+  return fallbackMessage;
+};
 
 export const useAuth = () => {
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const store = useAuthStore();
 
   const login = async (data: LoginInput) => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await authService.login(data);
       store.setCurrentUser(response.user);
       
-      if (response.user.role === 'admin') {
+      if (response.user.role === 'tenant') {
         store.setAdminMode(true);
-        navigate('/admin'); // Pindah ke halaman admin
+        store.setAuthScreen(null);
       } else if (!response.user.isVerified) {
-        store.setAuthScreen('verify'); // Tetap di /auth tapi switch screen ke OTP
+        store.setAuthScreen('verify');
       } else {
-        navigate('/dashboard'); // User biasa langsung ke dashboard
+        store.setAuthScreen(null);
       }
-    } catch (err: any) {      setError(err.message);
+    } catch (err: any) {
+      setError(getErrorMessage(err, 'Terjadi kesalahan saat login.'));
     } finally {
       setLoading(false);
     }
@@ -33,10 +50,9 @@ export const useAuth = () => {
     setError(null);
     try {
       await authService.register(data);
-      // Diasumsikan setelah register, user diarahkan ke verifikasi token
       store.setAuthScreen('verify');
     } catch (err: any) {
-      setError(err.message);
+      setError(getErrorMessage(err, 'Terjadi kesalahan saat registrasi.'));
     } finally {
       setLoading(false);
     }
@@ -50,18 +66,22 @@ export const useAuth = () => {
       store.setCurrentUser(response.user);
       store.setAuthScreen(null);
     } catch (err: any) {
-      setError(err.message);
+      setError(getErrorMessage(err, 'Verifikasi gagal.'));
     } finally {
       setLoading(false);
     }
   };
 
   const resendToken = async (email: string) => {
+    setLoading(true);
+    setError(null);
     try {
       await authService.resendVerification(email);
       alert('Kode verifikasi baru telah dikirimkan ke email Anda.');
     } catch (err: any) {
-      setError(err.message);
+      setError(getErrorMessage(err, 'Gagal mengirim ulang kode verifikasi.'));
+    } finally {
+      setLoading(false);
     }
   };
 

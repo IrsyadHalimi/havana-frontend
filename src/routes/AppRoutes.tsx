@@ -23,7 +23,7 @@ const router = createBrowserRouter([
 
   // 🔒 PROTECTED ROUTES (Halaman Terproteksi Umum)
   {
-    element: <ProtectedRoute allowedRoles={['user', 'admin']} />,
+    element: <ProtectedRoute allowedRoles={['customer', 'tenant']} />,
     children: [
       {
         path: '/dashboard',
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
 
   // 🔐 ADMIN ONLY ROUTES (Halaman Khusus Admin)
   {
-    element: <ProtectedRoute allowedRoles={['admin']} />,
+    element: <ProtectedRoute allowedRoles={['tenant']} />,
     children: [
       {
         path: '/admin',
