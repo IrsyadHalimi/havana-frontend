@@ -58,11 +58,11 @@ export const useAuth = () => {
     }
   };
 
-  const verify = async (token: string, password?: string) => {
+  const verify = async (token: string) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await authService.verifyEmail(token, password);
+      const response = await authService.verifyEmail(token);
       store.setCurrentUser(response.user);
       store.setAuthScreen(null);
     } catch (err: any) {

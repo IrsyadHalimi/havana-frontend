@@ -25,11 +25,11 @@ export const authService = {
     return res.json();
   },
 
-  async verifyEmail(token: string, password?: string): Promise<AuthResponse> {
+  async verifyEmail(token: string): Promise<AuthResponse> {
     const res = await fetch(`${API_URL}/verify-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, password }),
+      body: JSON.stringify({ token }),
     });
     if (!res.ok) throw new Error((await res.json()).message || 'Verifikasi Gagal');
     return res.json();

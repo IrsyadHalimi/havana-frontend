@@ -23,25 +23,31 @@ export default function AuthView() {
   const [hasTriggered, setHasTriggered] = useState(false);
 
   useEffect(() => {
-    // Membaca token dari URL browser (?token=897d632...)
     const queryParams = new URLSearchParams(window.location.search);
     const tokenFromUrl = queryParams.get('token');
 
-    // Jika user berada di layar 'verify' dan ada token di URL-nya, jalankan otomatis
-    if (authScreen === 'verify' && tokenFromUrl && !hasTriggered) {
-      setHasTriggered(true); // Kunci agar tidak double-hit
-      setError(null);
+    // 1. Buat fungsi async di dalam useEffect
+    const handleVerification = async (token: string) => {
+      try {
+        setHasTriggered(true); // Kunci agar tidak double-hit
+        setError(null);
+        
+        // 2. Gunakan await untuk menunggu proses verifikasi selesai
+        await verify(token);
+        
+        setVerifyStatus('success');
+      } catch (err) {
+        // 3. Tangkap error jika proses gagal
+        setVerifyStatus('error');
+      }
+    };
 
-      // Jalankan fungsi verify bawaan hooks milikmu
-      verify(tokenFromUrl, password)
-        .then(() => {
-          setVerifyStatus('success');
-        })
-        .catch(() => {
-          setVerifyStatus('error');
-        });
+    // Jika user berada di layar 'verify' dan ada token di URL-nya, jalankan otomatis
+    if (tokenFromUrl && !hasTriggered) {
+      handleVerification(tokenFromUrl);
     }
-  }, [authScreen, hasTriggered, verify, password, setError]);
+    
+  }, [authScreen, hasTriggered, verify, setError]);
 
   if (!authScreen) return null;
 
@@ -62,7 +68,7 @@ export default function AuthView() {
     const token = otpCode.join('');
     if (token.length < 6) return setError('Kode verifikasi harus 6 digit');
     // Meneruskan token dan password asal sesuai kebutuhan signature controller backend kamu
-    verify(token, password); 
+    verify(token); 
   };
 
   const handleOtpChange = (index: number, val: string) => {
