@@ -1,53 +1,31 @@
-// src/routes/AppRoutes.tsx
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
-import { PublicRoute } from './PublicRoute';
-import { ProtectedRoute } from './ProtectedRoute';
-import AuthView from '../features/auth/views/AuthView';
+import { Navigate, Route, Routes } from "react-router-dom";
 
-// Dummy Pages untuk contoh (Ganti dengan page asli Anda nanti)
-const Dashboard = () => <div className="p-8"><h1>User Dashboard (Protected)</h1></div>;
-const AdminPanel = () => <div className="p-8"><h1>Admin Control Panel (Strictly Admin Only)</h1></div>;
-const Unauthorized = () => <div className="p-8"><h1>403 - Anda tidak memiliki akses</h1></div>;
+import LoginPage from "../features/auth/pages/LoginPage";
+import RegisterPage from "../features/auth/pages/RegisterPage";
+import VerifyEmailPage from "../features/auth/pages/VerifyEmailPage";
 
-const router = createBrowserRouter([
-  // 🔓 PUBLIC ROUTES (Halaman Auth)
-  {
-    element: <PublicRoute />,
-    children: [
-      {
-        path: '/auth',
-        element: <AuthView />,
-      },
-    ],
-  },
+export default function AppRoutes() {
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={<Navigate to="/login" replace />}
+      />
 
-  // 🔒 PROTECTED ROUTES (Halaman Terproteksi Umum)
-  {
-    element: <ProtectedRoute allowedRoles={['customer', 'tenant']} />,
-    children: [
-      {
-        path: '/dashboard',
-        element: <Dashboard />,
-      },
-    ],
-  },
+      <Route
+        path="/login"
+        element={<LoginPage />}
+      />
 
-  // 🔐 ADMIN ONLY ROUTES (Halaman Khusus Admin)
-  {
-    element: <ProtectedRoute allowedRoles={['tenant']} />,
-    children: [
-      {
-        path: '/admin',
-        element: <AdminPanel />,
-      },
-    ],
-  },
+      <Route
+        path="/register"
+        element={<RegisterPage />}
+      />
 
-  // Rute Alternatif & 404
-  { path: '/unauthorized', element: <Unauthorized /> },
-  { path: '*', element: <Navigate to="/auth" replace /> },
-]);
-
-export const AppRoutes = () => {
-  return <RouterProvider router={router} />;
-};
+      <Route
+        path="/verify-email"
+        element={<VerifyEmailPage />}
+      />
+    </Routes>
+  );
+}
